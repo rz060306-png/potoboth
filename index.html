@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Character Photo Booth</title>
+    <title>4K Wide-Frame 16:9 Photo Booth</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -19,29 +17,21 @@
             align-items: center;
             justify-content: center;
         }
-        h1 { 
-            color: #333; 
-            margin: 0 0 5px 0; 
-            font-size: 1.8rem;
-        }
-        p.subtitle { 
-            color: #666; 
-            margin: 0 0 15px 0;
-            font-size: 0.9rem;
-        }
+        h1 { color: #333; margin: 0 0 5px 0; font-size: 1.8rem; }
+        p.subtitle { color: #666; margin: 0 0 15px 0; font-size: 0.9rem; }
         .container {
             width: 100%;
-            max-width: 500px; /* Ukuran pas untuk HP & Laptop */
+            max-width: 500px;
             background: white;
             padding: 20px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        /* Pembungkus Kamera Responsive (Menjaga Rasio Kotak Kamera 4:3) */
-        .camera-wrapper {
+        
+        .box-display {
             position: relative;
             width: 100%;
-            padding-top: 75%; /* Rasio aspek 4:3 (480/640 = 0.75) */
+            padding-top: 75%; 
             background: #111;
             border-radius: 12px;
             overflow: hidden;
@@ -49,161 +39,193 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         video {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; transform: scaleX(-1);
+        }
+        
+        .preview-container {
+            display: none;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scaleX(-1); /* Efek Cermin */
+            background: #fdfdfd;
+            padding: 10px;
+            border-radius: 12px;
+            border: 2px dashed #ccc;
         }
-        /* Overlay Hitung Mundur */
+        .ratio-16-9-box {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; 
+            overflow: hidden;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #preview-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: contain; background: #fff;
+        }
+
+        #adjust-control {
+            display: none;
+            margin-top: 15px;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        #adjust-control label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .slider { width: 100%; accent-color: #ff3377; }
+
         #countdown {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 5rem;
-            color: #ff3377;
-            font-weight: bold;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 10;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 5rem; color: #ff3377; font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5); display: none; z-index: 10;
         }
-        /* Indikator Sesi */
         #photo-info {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 51, 119, 0.9);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: none;
-            z-index: 10;
-            white-space: nowrap;
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 51, 119, 0.9); color: white;
+            padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            display: none; z-index: 10;
+        }
+        #start-btn, #download-btn {
+            color: white; border: none; padding: 14px 0; width: 100%;
+            font-size: 1.1rem; font-weight: bold; border-radius: 30px;
+            cursor: pointer; margin-top: 15px; transition: 0.2s;
         }
         #start-btn {
             background: linear-gradient(135deg, #ff3377, #ff5500);
-            color: white;
-            border: none;
-            padding: 14px 0;
-            width: 100%;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            margin-top: 15px;
             box-shadow: 0 4px 10px rgba(255, 51, 119, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        #start-btn:active, #start-btn:hover { 
-            transform: scale(0.98); 
+        #download-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+            display: none;
         }
         
-        /* Menu Pilihan Frame Berkarakter */
         #frame-selection {
-            display: none;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px dashed #ddd;
+            display: none; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ddd;
         }
-        #frame-selection h3 {
-            font-size: 1rem;
-            color: #444;
-            margin-bottom: 15px;
-        }
-        .frame-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
+        #frame-selection h3 { font-size: 1rem; color: #444; margin-bottom: 12px; margin-top: 0; }
+        
+        .frame-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .frame-btn {
-            padding: 12px 5px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            color: white;
-            transition: transform 0.1s;
+            padding: 12px 5px; font-size: 0.85rem; font-weight: bold; border: none;
+            border-radius: 10px; cursor: pointer; color: white; transition: transform 0.1s;
         }
         .frame-btn:active { transform: scale(0.95); }
+        
         .cat-btn { background: #FF9999; }
         .bear-btn { background: #CD853F; }
         .dino-btn { background: #2ECC71; }
-        .space-btn { background: #34495E; }
+        .unik-btn { background: #8E44AD; }
 
-        /* Canvas Tersembunyi */
+        .upload-box {
+            grid-column: span 2; background: #e8f4fd; border: 2px dashed #3498db; padding: 12px;
+            border-radius: 10px; cursor: pointer; color: #2980b9; font-size: 0.85rem;
+            font-weight: bold; position: relative; margin-bottom: 5px;
+        }
+        .upload-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
         canvas { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📸 Character Photo Booth</h1>
-    <p class="subtitle">Ambil 4 pose terbaikmu, lalu pilih karakter favorit!</p>
+    <h1>Photo Booth</h1>
+    <p class="subtitle">take you photo</p>
     
-    <div class="camera-wrapper">
+    <div class="box-display" id="camera-zone">
         <video id="video" autoplay playsinline></video>
         <div id="countdown">3</div>
         <div id="photo-info">Bersiap...</div>
     </div>
 
+    <div class="preview-container" id="preview-box">
+        <p style="font-size: 0.8rem; color:#888; margin: 0 0 5px 0;">PRATINJAU HASIL (4K 16:9):</p>
+        <div class="ratio-16-9-box">
+            <img id="preview-img" src="" alt="Pratinjau Hasil">
+        </div>
+    </div>
+
+    <div id="adjust-control">
+        <label for="offset-slider">ATUR POSISI FOTO (UP / DOWN):</label>
+        <input type="range" id="offset-slider" class="slider" min="0" max="200" value="100" oninput="renderUlangDenganRasio(this.value)">
+    </div>
+
     <button id="start-btn" onclick="mulaiPhotoboth()">MULAI SESI FOTO</button>
+    <button id="download-btn" onclick="unduhHasilAkhir()"> DOWNLOAD FOTO (4K Ultra HD)</button>
 
     <div id="frame-selection">
-        <h3>✨ PILIH BINGKAI KARAKTER ✨</h3>
+        <h3> PILIH BINGKAI BAWAAN ATAU UPLOAD FILE </h3>
         <div class="frame-grid">
-            <button class="frame-btn cat-btn" onclick="prosesFrame('cat')">🐱 Neko Pink</button>
-            <button class="frame-btn bear-btn" onclick="prosesFrame('bear')">🐻 Brownie Bear</button>
-            <button class="frame-btn dino-btn" onclick="prosesFrame('dino')">🦖 Green Dino</button>
-            <button class="frame-btn space-btn" onclick="prosesFrame('space')">🚀 Retro Space</button>
+            <div class="upload-box">
+                 UPLOAD FRAME DESAINMU 
+                <input type="file" id="file-frame" accept="image/png" onchange="bacaFileKustom(this)">
+            </div>
+
+            <button class="frame-btn cat-btn" onclick="setTemaSistem('cat')"> Neko Pink</button>
+            <button class="frame-btn bear-btn" onclick="setTemaSistem('bear')"> Brownie Bear</button>
+            <button class="frame-btn dino-btn" onclick="setTemaSistem('dino')"> Green Dino</button>
+            <button class="frame-btn unik-btn" onclick="setTemaSistem('unik')"> Frame Unik</button>
         </div>
     </div>
 </div>
 
-<canvas id="canvas" width="640" height="480"></canvas>
+<canvas id="canvas" width="3840" height="2160"></canvas>
 
 <script>
     const video = document.getElementById('video');
     const countdownEl = document.getElementById('countdown');
     const infoEl = document.getElementById('photo-info');
     const startBtn = document.getElementById('start-btn');
+    const downloadBtn = document.getElementById('download-btn');
     const frameSelection = document.getElementById('frame-selection');
+    const cameraZone = document.getElementById('camera-zone');
+    const previewBox = document.getElementById('preview-box');
+    const previewImg = document.getElementById('preview-img');
+    const adjustControl = document.getElementById('adjust-control');
+    const sliderEl = document.getElementById('offset-slider');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
     let fotoTerambil = [];
     let fotoKe = 1;
+    let jenisFrameAktif = 'cat'; 
+    let objekGambarKustom = null; 
 
-    // Menyalakan Kamera Depan otomatis (Mendukung Laptop & HP)
-    navigator.mediaDevices.getUserMedia({ 
-        video: { 
-            width: { ideal: 640 }, 
-            height: { ideal: 480 },
-            facingMode: "user" // Memaksa kamera depan/selfie di HP
-        } 
-    })
-    .then(stream => { video.srcObject = stream; })
-    .catch(err => { alert("Akses kamera ditolak atau tidak didukung: " + err); });
+    navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" } })
+        .then(stream => { video.srcObject = stream; })
+        .catch(err => { alert("Akses kamera ditolak: " + err); });
 
     function mulaiPhotoboth() {
         fotoTerambil = [];
         fotoKe = 1;
+        objekGambarKustom = null;
+        jenisFrameAktif = 'cat';
+        document.getElementById('file-frame').value = ""; 
         startBtn.style.display = 'none';
+        downloadBtn.style.display = 'none';
         frameSelection.style.display = 'none';
+        previewBox.style.display = 'none';
+        adjustControl.style.display = 'none';
+        cameraZone.style.display = 'block'; 
         infoEl.style.display = 'block';
         ambilSesiFoto();
     }
 
     function ambilSesiFoto() {
         if (fotoKe > 4) {
+            cameraZone.style.display = 'none'; 
             infoEl.style.display = 'none';
             frameSelection.style.display = 'block';
+            adjustControl.style.display = 'block'; 
+            sliderEl.value = 100;
+            setTemaSistem('cat'); 
             return;
         }
 
@@ -221,95 +243,126 @@
                 countdownEl.style.display = 'none';
                 jepretGambar();
                 fotoKe++;
-                setTimeout(ambilSesiFoto, 1200); // Jeda transisi antar pose
+                setTimeout(ambilSesiFoto, 1200);
             }
         }, 1000);
     }
 
     function jepretGambar() {
         const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = 320;
-        tempCanvas.height = 240;
+        tempCanvas.width = 640;
+        tempCanvas.height = 480;
         const tempCtx = tempCanvas.getContext('2d');
-        
-        // Mempertahankan efek mirror cermin pada file gambar akhir
-        tempCtx.translate(320, 0);
+        tempCtx.translate(640, 0);
         tempCtx.scale(-1, 1);
-        tempCtx.drawImage(video, 0, 0, 320, 240);
-        
+        tempCtx.drawImage(video, 0, 0, 640, 480);
         fotoTerambil.push(tempCanvas);
     }
 
-    function prosesFrame(jenisKarakter) {
-        ctx.clearRect(0, 0, 640, 480);
+    function setTemaSistem(namaTema) {
+        jenisFrameAktif = namaTema;
+        objekGambarKustom = null;
+        renderUlangDenganRasio(sliderEl.value);
+    }
 
-        // Susun Grid 2x2 pada Canvas Utama
-        ctx.drawImage(fotoTerambil[0], 0, 0);   
-        ctx.drawImage(fotoTerambil[1], 320, 0); 
-        ctx.drawImage(fotoTerambil[2], 0, 240); 
-        ctx.drawImage(fotoTerambil[3], 320, 240);
+    // Membaca file kustom yang di-upload user
+    function bacaFileKustom(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    objekGambarKustom = img;
+                    jenisFrameAktif = 'user-upload';
+                    renderUlangDenganRasio(sliderEl.value);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
+    // CONFIGURASI UTAMA: MENGUBAH TEBAL MARGIN BINGKAI FOTO
+    function renderUlangDenganRasio(nilaiSlider) {
+        ctx.clearRect(0, 0, 3840, 2160);
+
+        // --- SEKARANG DI-SET JAUH LEBIH LEBAR DAN TEBAL ---
+        const marginLuarX = 320;   // Ditambah agar bingkai kanan-kiri sangat lebar
+        const marginLuarY = 220;   // Ditambah agar bingkai atas-bawah sangat tebal
+        const gapTengahX = 140;    // Celah kosong tengah vertikal diperlebar
+        const gapTengahY = 120;    // Celah kosong tengah horizontal diperlebar
+
+        // Kalkulasi otomatis sisa ukuran lebar & tinggi foto agar tetap presisi 16:9
+        const targetW = (3840 - (marginLuarX * 2) - gapTengahX) / 2; 
+        const targetH = (2160 - (marginLuarY * 2) - gapTengahY) / 2; 
+
+        // Slicing video kamera (4:3) disesuaikan dengan aspek ratio bidang baru
+        const sourceW = 640;
+        const sourceH = 640 * (targetH / targetW); 
+        const sY_Maksimal = 480 - sourceH; 
+        const finalSourceY = (nilaiSlider / 200) * sY_Maksimal;
+
+        // Titik koordinat peletakan grid foto
+        const xKiri = marginLuarX;
+        const xKanan = marginLuarX + targetW + gapTengahX;
+        const yAtas = marginLuarY;
+        const yBawah = marginLuarY + targetH + gapTengahY;
+
+        // Gambar ke-4 foto dengan layout berjarak tebal (wide frame)
+        ctx.drawImage(fotoTerambil[0], 0, finalSourceY, sourceW, sourceH, xKiri, yAtas, targetW, targetH);     
+        ctx.drawImage(fotoTerambil[1], 0, finalSourceY, sourceW, sourceH, xKanan, yAtas, targetW, targetH);    
+        ctx.drawImage(fotoTerambil[2], 0, finalSourceY, sourceW, sourceH, xKiri, yBawah, targetW, targetH);    
+        ctx.drawImage(fotoTerambil[3], 0, finalSourceY, sourceW, sourceH, xKanan, yBawah, targetW, targetH);   
+
+        // Warna Latar Belakang Frame Bawaan Sistem
         let warnaBorder = "#FFF";
-        if(jenisKarakter === 'cat') warnaBorder = "#FFB6C1";
-        if(jenisKarakter === 'bear') warnaBorder = "#CD853F";
-        if(jenisKarakter === 'dino') warnaBorder = "#2ECC71";
-        if(jenisKarakter === 'space') warnaBorder = "#2C3E50";
+        if(jenisFrameAktif === 'cat') warnaBorder = "#FFB6C1";
+        if(jenisFrameAktif === 'bear') warnaBorder = "#CD853F";
+        if(jenisFrameAktif === 'dino') warnaBorder = "#2ECC71";
+        if(jenisFrameAktif === 'unik') warnaBorder = "#8E44AD";
+        if(jenisFrameAktif === 'user-upload') warnaBorder = "transparent"; 
 
-        // Menggambar Border Frame
-        ctx.lineWidth = 18;
-        ctx.strokeStyle = warnaBorder;
-        ctx.strokeRect(9, 9, 622, 462);
-
-        // Menggambar Garis Pembatas Tengah
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.moveTo(320, 0); ctx.lineTo(320, 480);
-        ctx.moveTo(0, 240); ctx.lineTo(640, 240);
-        ctx.stroke();
-
-        // Load Gambar Kustom (.png)
-        const imgKarakter = new Image();
-        imgKarakter.src = `${jenisKarakter}.png`; 
-
-        imgKarakter.onload = function() {
-            ctx.drawImage(imgKarakter, 0, 0, 640, 480);
-            unduhHasilAkhir();
-        };
-
-        imgKarakter.onerror = function() {
-            // Gambar Karakter Cadangan Otomatis (Jika file PNG tidak ada)
-            ctx.fillStyle = (jenisKarakter === 'cat') ? "#FFC0CB" : (jenisKarakter === 'bear') ? "#D2B48C" : (jenisKarakter === 'dino') ? "#A3E4D7" : "#5D6D7E";
-            ctx.beginPath();
-            ctx.arc(575, 415, 40, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = "#FFF";
-            ctx.lineWidth = 4;
-            ctx.stroke();
-
-            ctx.fillStyle = "#000";
-            ctx.beginPath();
-            ctx.arc(563, 410, 4, 0, Math.PI * 2);
-            ctx.arc(587, 410, 4, 0, Math.PI * 2);
-            ctx.fill();
-
+        if(warnaBorder !== "transparent") {
+            ctx.globalCompositeOperation = 'destination-over';
             ctx.fillStyle = warnaBorder;
-            ctx.font = "bold 14px Arial";
-            ctx.fillText(jenisKarakter.toUpperCase() + " ZONE", 25, 32);
-            
-            unduhHasilAkhir();
-        };
+            ctx.fillRect(0, 0, 3840, 2160);
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        // Tempel lapisan teratas (Template Bingkai Kustom PNG kamu)
+        if (jenisFrameAktif === 'user-upload' && objekGambarKustom) {
+            ctx.drawImage(objekGambarKustom, 0, 0, 3840, 2160);
+        } else {
+            const imgSistem = new Image();
+            imgSistem.src = (jenisFrameAktif === 'unik') ? "frame_unik.png" : `${jenisFrameAktif}.png`;
+
+            imgSistem.onload = function() {
+                ctx.drawImage(imgSistem, 0, 0, 3840, 2160);
+                previewImg.src = canvas.toDataURL("image/png");
+            };
+            imgSistem.onerror = function() {
+                previewImg.src = canvas.toDataURL("image/png");
+            };
+        }
+
+        previewImg.src = canvas.toDataURL("image/png");
+        previewBox.style.display = 'block';
+        downloadBtn.style.display = 'block';
     }
 
     function unduhHasilAkhir() {
         const hasilGambar = canvas.toDataURL("image/png");
         const linkDownload = document.createElement('a');
-        linkDownload.download = `photobooth_${Date.now()}.png`;
+        linkDownload.download = `photobooth_wideframe_4K_${Date.now()}.png`;
         linkDownload.href = hasilGambar;
         linkDownload.click();
 
-        // Tampilkan kembali tombol awal
         startBtn.style.display = 'inline-block';
+        downloadBtn.style.display = 'none';
         frameSelection.style.display = 'none';
+        previewBox.style.display = 'none';
+        adjustControl.style.display = 'none';
+        cameraZone.style.display = 'block';
     }
 </script>
 
