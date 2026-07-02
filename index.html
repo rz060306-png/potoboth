@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Character Photo Booth</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 { 
+            color: #333; 
+            margin: 0 0 5px 0; 
+            font-size: 1.8rem;
+        }
+        p.subtitle { 
+            color: #666; 
+            margin: 0 0 15px 0;
+            font-size: 0.9rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px; /* Ukuran pas untuk HP & Laptop */
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        /* Pembungkus Kamera Responsive (Menjaga Rasio Kotak Kamera 4:3) */
+        .camera-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* Rasio aspek 4:3 (480/640 = 0.75) */
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Efek Cermin */
+        }
+        /* Overlay Hitung Mundur */
+        #countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: #ff3377;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 10;
+        }
+        /* Indikator Sesi */
+        #photo-info {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 51, 119, 0.9);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        #start-btn {
+            background: linear-gradient(135deg, #ff3377, #ff5500);
+            color: white;
+            border: none;
+            padding: 14px 0;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(255, 51, 119, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        #start-btn:active, #start-btn:hover { 
+            transform: scale(0.98); 
+        }
+        
+        /* Menu Pilihan Frame Berkarakter */
+        #frame-selection {
+            display: none;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ddd;
+        }
+        #frame-selection h3 {
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 15px;
+        }
+        .frame-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .frame-btn {
+            padding: 12px 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.1s;
+        }
+        .frame-btn:active { transform: scale(0.95); }
+        .cat-btn { background: #FF9999; }
+        .bear-btn { background: #CD853F; }
+        .dino-btn { background: #2ECC71; }
+        .space-btn { background: #34495E; }
+
+        /* Canvas Tersembunyi */
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📸 Character Photo Booth</h1>
+    <p class="subtitle">Ambil 4 pose terbaikmu, lalu pilih karakter favorit!</p>
+    
+    <div class="camera-wrapper">
+        <video id="video" autoplay playsinline></video>
+        <div id="countdown">3</div>
+        <div id="photo-info">Bersiap...</div>
+    </div>
+
+    <button id="start-btn" onclick="mulaiPhotoboth()">MULAI SESI FOTO</button>
+
+    <div id="frame-selection">
+        <h3>✨ PILIH BINGKAI KARAKTER ✨</h3>
+        <div class="frame-grid">
+            <button class="frame-btn cat-btn" onclick="prosesFrame('cat')">🐱 Neko Pink</button>
+            <button class="frame-btn bear-btn" onclick="prosesFrame('bear')">🐻 Brownie Bear</button>
+            <button class="frame-btn dino-btn" onclick="prosesFrame('dino')">🦖 Green Dino</button>
+            <button class="frame-btn space-btn" onclick="prosesFrame('space')">🚀 Retro Space</button>
+        </div>
+    </div>
+</div>
+
+<canvas id="canvas" width="640" height="480"></canvas>
+
+<script>
+    const video = document.getElementById('video');
+    const countdownEl = document.getElementById('countdown');
+    const infoEl = document.getElementById('photo-info');
+    const startBtn = document.getElementById('start-btn');
+    const frameSelection = document.getElementById('frame-selection');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let fotoTerambil = [];
+    let fotoKe = 1;
+
+    // Menyalakan Kamera Depan otomatis (Mendukung Laptop & HP)
+    navigator.mediaDevices.getUserMedia({ 
+        video: { 
+            width: { ideal: 640 }, 
+            height: { ideal: 480 },
+            facingMode: "user" // Memaksa kamera depan/selfie di HP
+        } 
+    })
+    .then(stream => { video.srcObject = stream; })
+    .catch(err => { alert("Akses kamera ditolak atau tidak didukung: " + err); });
+
+    function mulaiPhotoboth() {
+        fotoTerambil = [];
+        fotoKe = 1;
+        startBtn.style.display = 'none';
+        frameSelection.style.display = 'none';
+        infoEl.style.display = 'block';
+        ambilSesiFoto();
+    }
+
+    function ambilSesiFoto() {
+        if (fotoKe > 4) {
+            infoEl.style.display = 'none';
+            frameSelection.style.display = 'block';
+            return;
+        }
+
+        let count = 3;
+        countdownEl.style.display = 'block';
+        countdownEl.innerText = count;
+        infoEl.innerText = `POSE KE-${fotoKe} / 4`;
+
+        let timer = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countdownEl.innerText = count;
+            } else {
+                clearInterval(timer);
+                countdownEl.style.display = 'none';
+                jepretGambar();
+                fotoKe++;
+                setTimeout(ambilSesiFoto, 1200); // Jeda transisi antar pose
+            }
+        }, 1000);
+    }
+
+    function jepretGambar() {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 320;
+        tempCanvas.height = 240;
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        // Mempertahankan efek mirror cermin pada file gambar akhir
+        tempCtx.translate(320, 0);
+        tempCtx.scale(-1, 1);
+        tempCtx.drawImage(video, 0, 0, 320, 240);
+        
+        fotoTerambil.push(tempCanvas);
+    }
+
+    function prosesFrame(jenisKarakter) {
+        ctx.clearRect(0, 0, 640, 480);
+
+        // Susun Grid 2x2 pada Canvas Utama
+        ctx.drawImage(fotoTerambil[0], 0, 0);   
+        ctx.drawImage(fotoTerambil[1], 320, 0); 
+        ctx.drawImage(fotoTerambil[2], 0, 240); 
+        ctx.drawImage(fotoTerambil[3], 320, 240);
+
+        let warnaBorder = "#FFF";
+        if(jenisKarakter === 'cat') warnaBorder = "#FFB6C1";
+        if(jenisKarakter === 'bear') warnaBorder = "#CD853F";
+        if(jenisKarakter === 'dino') warnaBorder = "#2ECC71";
+        if(jenisKarakter === 'space') warnaBorder = "#2C3E50";
+
+        // Menggambar Border Frame
+        ctx.lineWidth = 18;
+        ctx.strokeStyle = warnaBorder;
+        ctx.strokeRect(9, 9, 622, 462);
+
+        // Menggambar Garis Pembatas Tengah
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(320, 0); ctx.lineTo(320, 480);
+        ctx.moveTo(0, 240); ctx.lineTo(640, 240);
+        ctx.stroke();
+
+        // Load Gambar Kustom (.png)
+        const imgKarakter = new Image();
+        imgKarakter.src = `${jenisKarakter}.png`; 
+
+        imgKarakter.onload = function() {
+            ctx.drawImage(imgKarakter, 0, 0, 640, 480);
+            unduhHasilAkhir();
+        };
+
+        imgKarakter.onerror = function() {
+            // Gambar Karakter Cadangan Otomatis (Jika file PNG tidak ada)
+            ctx.fillStyle = (jenisKarakter === 'cat') ? "#FFC0CB" : (jenisKarakter === 'bear') ? "#D2B48C" : (jenisKarakter === 'dino') ? "#A3E4D7" : "#5D6D7E";
+            ctx.beginPath();
+            ctx.arc(575, 415, 40, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#FFF";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            ctx.fillStyle = "#000";
+            ctx.beginPath();
+            ctx.arc(563, 410, 4, 0, Math.PI * 2);
+            ctx.arc(587, 410, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = warnaBorder;
+            ctx.font = "bold 14px Arial";
+            ctx.fillText(jenisKarakter.toUpperCase() + " ZONE", 25, 32);
+            
+            unduhHasilAkhir();
+        };
+    }
+
+    function unduhHasilAkhir() {
+        const hasilGambar = canvas.toDataURL("image/png");
+        const linkDownload = document.createElement('a');
+        linkDownload.download = `photobooth_${Date.now()}.png`;
+        linkDownload.href = hasilGambar;
+        linkDownload.click();
+
+        // Tampilkan kembali tombol awal
+        startBtn.style.display = 'inline-block';
+        frameSelection.style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
