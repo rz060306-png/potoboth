@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Modern Soft Photobooth - Mobile Optimized</title>
+    <title>Zeetsnapphotobooth</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #fcfaf7; /* Warna background super soft */
+            background-color: #faf8f5;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Memastikan kamera proporsional & efek mirror */
         video {
             object-fit: cover;
             transform: scaleX(-1);
@@ -21,56 +20,49 @@
         .captured-frame {
             transform: scaleX(-1);
         }
-        /* Filter Styles */
+        
         .filter-normal { filter: none; }
         .filter-vintage { filter: sepia(0.4) contrast(0.95) brightness(1.05); }
         .filter-bw { filter: grayscale(1) contrast(1.1); }
         .filter-warm { filter: saturate(1.15) sepia(0.1) brightness(1.02); }
         .filter-cool { filter: hue-rotate(8deg) saturate(1.1) brightness(1.02); }
 
-        /* Tweak khusus HP agar strip tidak kepanjangan */
         @media (max-width: 768px) {
             .responsive-strip-container {
-                transform: scale(0.85);
+                transform: scale(0.82);
                 transform-origin: top center;
-                margin-bottom: -40px; /* Kompensasi ruang kosong akibat scale */
+                margin-bottom: -60px;
             }
         }
     </style>
 </head>
 <body class="text-gray-700 min-h-screen flex flex-col justify-between antialiased">
 
-    <!-- Header Mini & Cantik -->
-    <header class="py-3 md:py-4 text-center bg-white/70 backdrop-blur-md shadow-sm sticky top-0 z-50 px-4">
-        <h1 class="text-lg md:text-2xl font-semibold tracking-wide text-amber-900/80">Photobooth</h1>
-        <p class="text-[10px] md:text-xs text-stone-400 mt-0.5">Ambil 4 foto terbaikmu</p>
+    <!-- Header -->
+    <header class="py-3 md:py-4 text-center bg-white/70 backdrop-blur-md shadow-xs sticky top-0 z-50 px-4">
+        <h1 class="text-lg md:text-2xl font-semibold tracking-wide text-stone-800">ZEETSNAP</h1>
+        <p class="text-[10px] md:text-xs text-stone-400 mt-0.5">Bikin moment biasa jadi luar biasa</p>
     </header>
 
-    <!-- Main Content Grid -->
-    <main class="max-w-5xl mx-auto p-4 w-full grid grid-cols-1 md:grid-cols-12 gap-6 items-start my-auto">
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto p-4 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start my-auto">
         
-        <!-- BAGIAN KIRI: Kamera & Panel Kontrol (7 Kolom di Desktop) -->
-        <div class="md:col-span-7 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-stone-100 flex flex-col gap-4">
+        <!-- KIRI: Kontrol & Kamera (7 Kolom) -->
+        <div class="lg:col-span-7 bg-white p-4 md:p-6 rounded-2xl shadow-xs border border-stone-100 flex flex-col gap-4">
             
-            <!-- Kamera Viewport -->
+            <!-- Viewport Kamera -->
             <div class="relative aspect-[4/3] w-full bg-stone-50 rounded-xl overflow-hidden border border-stone-200/40 shadow-inner">
                 <video id="video" class="w-full h-full filter-normal" autoplay playsinline></video>
-                
-                <!-- Countdown Overlay -->
-                <div id="countdown" class="absolute inset-0 flex items-center justify-center text-6xl md:text-7xl font-bold text-white bg-black/20 hidden backdrop-blur-xs">3</div>
-                
-                <!-- Flash Effect -->
+                <div id="countdown" class="absolute inset-0 flex items-center justify-center text-6xl font-bold text-white bg-black/20 hidden">3</div>
                 <div id="flash" class="absolute inset-0 bg-white hidden z-40"></div>
-                
-                <!-- Status Poin -->
-                <div class="absolute bottom-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-[11px] font-medium tracking-wide backdrop-blur-md">
+                <div class="absolute bottom-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-[11px] font-medium backdrop-blur-md">
                      Slot: <span id="photo-index" class="text-amber-300">0</span> / 4
                 </div>
             </div>
 
-            <!-- Panel Filter -->
+            <!-- Pilihan Filter -->
             <div>
-                <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider block mb-2">Pilih Filter</span>
+                <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider block mb-2">Pilih Filter</span>
                 <div class="grid grid-cols-5 gap-1.5">
                     <button onclick="setFilter('filter-normal')" class="py-2 text-[11px] font-medium rounded-lg border bg-stone-50 hover:bg-stone-100 active:scale-95 transition">Normal</button>
                     <button onclick="setFilter('filter-vintage')" class="py-2 text-[11px] font-medium rounded-lg border bg-amber-50/40 text-amber-900 hover:bg-amber-50 active:scale-95 transition">Vintage</button>
@@ -80,29 +72,77 @@
                 </div>
             </div>
 
-            <!-- Panel Tema/Frame -->
+            <!-- Pilihan 12 Frame Aesthetic -->
             <div>
-                <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider block mb-2">Desain Frame</span>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="setFrame('#ffffff', 'clear')" class="p-2.5 text-[11px] font-medium rounded-xl border-2 border-stone-200 bg-white flex flex-col items-center gap-1 hover:border-stone-400 transition">
-                        <div class="w-6 h-6 rounded bg-white border border-stone-200 shadow-xs"></div>
-                        <span>Pure White</span>
+                <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider block mb-2">Pilihan Desain Frame</span>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[220px] overflow-y-auto pr-1">
+                    <!-- 1. Putih -->
+                    <button onclick="setFrame('#ffffff', 'clear', 'Memorable Day')" class="p-2 text-[11px] font-medium rounded-xl border border-stone-200 bg-white flex items-center gap-2 hover:border-stone-400 transition text-left">
+                        <div class="w-6 h-6 rounded bg-white border border-stone-300 shadow-xs shrink-0"></div>
+                        <span class="truncate">Pure White</span>
                     </button>
-                    <button onclick="setFrame('#fecdd3', 'hearts')" class="p-2.5 text-[11px] font-medium rounded-xl border border-transparent bg-rose-50/60 text-rose-700 flex flex-col items-center gap-1 hover:bg-rose-50 transition">
-                        <div class="w-6 h-6 rounded bg-rose-200 flex items-center justify-center text-xs"></div>
-                        <span>Soft Sakura</span>
+                    <!-- 2. Sakura -->
+                    <button onclick="setFrame('#fecdd3', 'hearts', ' Sakura Blossom ')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-rose-50 text-rose-700 flex items-center gap-2 hover:bg-rose-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-rose-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Soft Sakura</span>
                     </button>
-                    <button onclick="setFrame('#fef3c7', 'stars')" class="p-2.5 text-[11px] font-medium rounded-xl border border-transparent bg-amber-50/60 text-amber-700 flex flex-col items-center gap-1 hover:bg-amber-50 transition">
-                        <div class="w-6 h-6 rounded bg-amber-200 flex items-center justify-center text-xs"></div>
-                        <span>Retro Butter</span>
+                    <!-- 3. Butter -->
+                    <button onclick="setFrame('#fef3c7', 'stars', ' Retro Butter ')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-amber-50 text-amber-700 flex items-center gap-2 hover:bg-amber-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-amber-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Retro Butter</span>
+                    </button>
+                    <!-- 4. Matcha -->
+                    <button onclick="setFrame('#d1fae5', 'matcha', 'Matcha Latte')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-emerald-50 text-emerald-800 flex items-center gap-2 hover:bg-emerald-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-emerald-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Matcha Latte</span>
+                    </button>
+                    <!-- 5. Lavender -->
+                    <button onclick="setFrame('#e0e7ff', 'lavender', 'Lavender Dream')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-indigo-50 text-indigo-800 flex items-center gap-2 hover:bg-indigo-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-indigo-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Lavender Dream</span>
+                    </button>
+                    <!-- 6. Dark -->
+                    <button onclick="setFrame('#1e293b', 'dark', 'Midnight Sky')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-slate-800 text-slate-200 flex items-center gap-2 hover:bg-slate-700 transition text-left">
+                        <div class="w-6 h-6 rounded bg-slate-900 border border-slate-700 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Midnight Sky</span>
+                    </button>
+                    <!-- 7. Peach -->
+                    <button onclick="setFrame('#ffedd5', 'peach', 'Sweet Peach')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-orange-50 text-orange-700 flex items-center gap-2 hover:bg-orange-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-orange-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Baby Peach</span>
+                    </button>
+                    <!-- 8. Choco Oat -->
+                    <button onclick="setFrame('#f5eae0', 'choco', 'Cozy Choco')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-stone-100 text-amber-900 flex items-center gap-2 hover:bg-stone-200 transition text-left">
+                        <div class="w-6 h-6 rounded bg-[#e7d7c9] flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Choco Oat</span>
+                    </button>
+                    <!-- 9. Lilac Clouds -->
+                    <button onclick="setFrame('#fae8ff', 'lilac', 'Lilac Clouds')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-fuchsia-50 text-fuchsia-700 flex items-center gap-2 hover:bg-fuchsia-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-fuchsia-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Lilac Clouds</span>
+                    </button>
+                    <!-- 10. Charcoal Gray -->
+                    <button onclick="setFrame('#f1f5f9', 'charcoal', 'Gray')" class="p-2 text-[11px] font-medium rounded-xl border border-stone-200 bg-slate-50 text-slate-700 flex items-center gap-2 hover:bg-slate-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-slate-300 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Charcoal Gray</span>
+                    </button>
+                    <!-- 11. Pink Berry (NEW) -->
+                    <button onclick="setFrame('#fce7f3', 'berry', 'Berry Sweet')" class="p-2 text-[11px] font-medium rounded-xl border border-transparent bg-pink-50 text-pink-700 flex items-center gap-2 hover:bg-pink-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-pink-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Pink Berry</span>
+                    </button>
+                    <!-- 12. Coconut Cream (NEW) -->
+                    <button onclick="setFrame('#f5f5f4', 'coconut', 'Cozy Beige')" class="p-2 text-[11px] font-medium rounded-xl border border-stone-200 bg-stone-50 text-stone-700 flex items-center gap-2 hover:bg-stone-100 transition text-left">
+                        <div class="w-6 h-6 rounded bg-stone-200 flex items-center justify-center text-xs shrink-0"></div>
+                        <span class="truncate">Coconut Cream</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Tombol Utama Sesi -->
+            <!-- Tombol Aksi -->
             <div class="flex gap-2 mt-1">
-                <button id="start-btn" onclick="startPhotobooth()" class="flex-1 py-3 bg-gradient-to-r from-rose-400 to-amber-400 text-white font-medium text-sm rounded-xl shadow-md shadow-rose-100 hover:opacity-95 active:scale-[0.99] transition">
-                    Mulai Foto otomatis
+                <button id="start-btn" onclick="startPhotobooth()" class="flex-1 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-medium text-sm rounded-xl shadow-md shadow-rose-100 hover:opacity-95 active:scale-[0.99] transition">
+                    Mulai Foto Otomatis
                 </button>
                 <button onclick="resetPhotobooth()" class="px-4 py-3 bg-stone-100 text-stone-600 text-xs font-medium rounded-xl hover:bg-stone-200 transition">
                     Reset
@@ -110,53 +150,52 @@
             </div>
         </div>
 
-        <!-- BAGIAN KANAN: Preview Hasil Cetak (5 Kolom di Desktop) -->
-        <div class="md:col-span-5 flex flex-col items-center w-full mt-2 md:mt-0">
-            <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-3 self-center">Pratinjau Hasil</span>
+        <!-- KANAN: Pratinjau Strip -->
+        <div class="lg:col-span-5 flex flex-col items-center w-full mt-4 lg:mt-0">
+            <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-3">Pratinjau Hasil</span>
             
-            <!-- Pembungkus Strip yang Responsif Skalanya di Layar HP -->
             <div class="responsive-strip-container w-full flex justify-center">
-                <!-- Cetakan Cetak Photobooth (Strip) -->
-                <div id="booth-strip" class="w-[240px] p-3.5 bg-white shadow-xl rounded-sm flex flex-col gap-2.5 transition-colors duration-300 relative overflow-hidden border border-stone-100">
-                    <!-- Elemen Ornamen Frame -->
+                <!-- Strip Box -->
+                <div id="booth-strip" class="w-[240px] p-4 bg-white shadow-xl rounded-sm flex flex-col gap-3 transition-all duration-300 relative overflow-hidden border border-stone-100">
+                    <!-- Ornamen Hiasan Frame -->
                     <div id="frame-decorations" class="absolute inset-0 pointer-events-none z-10"></div>
                     
-                    <!-- Grid 4 Slot Foto -->
-                    <div class="grid grid-cols-1 gap-2.5 z-0">
-                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/30 relative">
+                    <!-- Slot Foto Grid -->
+                    <div class="grid grid-cols-1 gap-3 z-0">
+                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/20 relative">
                             <canvas id="canvas-1" class="w-full h-full captured-frame hidden"></canvas>
                         </div>
-                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/30 relative">
+                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/20 relative">
                             <canvas id="canvas-2" class="w-full h-full captured-frame hidden"></canvas>
                         </div>
-                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/30 relative">
+                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/20 relative">
                             <canvas id="canvas-3" class="w-full h-full captured-frame hidden"></canvas>
                         </div>
-                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/30 relative">
+                        <div class="aspect-[4/3] bg-stone-50 rounded-xs overflow-hidden border border-stone-200/20 relative">
                             <canvas id="canvas-4" class="w-full h-full captured-frame hidden"></canvas>
                         </div>
                     </div>
 
-                    <!-- Footer Strip -->
-                    <div class="text-center py-1.5 mt-0.5 z-20">
-                        <p class="text-[9px] uppercase tracking-widest text-stone-400 font-light" id="strip-footer-text"> Memorable Day </p>
+                    <!-- Footer Teks -->
+                    <div class="text-center py-1 mt-0.5 z-20">
+                        <p class="text-[9px] uppercase tracking-widest text-stone-400 font-medium transition-colors" id="strip-footer-text">Memorable Day</p>
                     </div>
                 </div>
             </div>
 
             <!-- Tombol Download -->
             <button id="download-btn" onclick="downloadImage()" disabled class="mt-4 w-full max-w-[240px] py-3 bg-stone-800 text-white text-xs font-medium rounded-xl shadow-md hover:bg-stone-900 disabled:bg-stone-100 disabled:text-stone-400 disabled:cursor-not-allowed transition">
-                 Unduh Hasil HD
+                Unduh Hasil HD 
             </button>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="py-3 text-center text-[10px] text-stone-400 bg-white/40 mt-6">
-        &copy; 2026 Photobooth. All Rights Reserved.
+        &copy; 2026 Zeetsnapphotobooth. All Rights Reserved.
     </footer>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- SCRIPT UTAMA -->
     <script>
         const video = document.getElementById('video');
         const countdownEl = document.getElementById('countdown');
@@ -166,6 +205,7 @@
         const downloadBtn = document.getElementById('download-btn');
         const strip = document.getElementById('booth-strip');
         const frameDecorations = document.getElementById('frame-decorations');
+        const stripFooterText = document.getElementById('strip-footer-text');
 
         let currentFilter = 'filter-normal';
         let currentFrameColor = '#ffffff';
@@ -174,26 +214,23 @@
         let streams = null;
         const capturedImages = [null, null, null, null];
 
-        // Akses Kamera Optimal HP & Laptop
         async function initCamera() {
             try {
-                if(streams) {
-                    streams.getTracks().forEach(track => track.stop());
-                }
+                if(streams) streams.getTracks().forEach(track => track.stop());
                 const constraints = {
                     audio: false,
                     video: {
                         facingMode: "user",
                         width: { ideal: 1280 },
                         height: { ideal: 960 },
-                        aspectRatio: 1.3333333333 // Mengunci aspek rasio 4:3 anti-gepeng
+                        aspectRatio: 1.3333333333
                     }
                 };
                 streams = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = streams;
             } catch (err) {
-                console.error("Kamera error: ", err);
-                alert("Aplikasi butuh izin kamera. Silakan aktifkan izin kamera di pengaturan browser Anda.");
+                console.error("Kamera bermasalah: ", err);
+                alert("Nyalakan izin kamera pada browser untuk menggunakan photobooth.");
             }
         }
 
@@ -208,40 +245,81 @@
             }
         }
 
-        function setFrame(color, style) {
+        function setFrame(color, style, footerText) {
             currentFrameColor = color;
             currentFrameStyle = style;
             strip.style.backgroundColor = color;
+            stripFooterText.innerText = footerText;
             frameDecorations.innerHTML = '';
             
             if (style === 'hearts') {
                 frameDecorations.innerHTML = `
                     <div class="absolute top-2 left-2 text-xs opacity-70">🌸</div>
                     <div class="absolute top-2 right-2 text-xs opacity-70">🌸</div>
-                    <div class="absolute bottom-10 left-3 text-xs opacity-50">✨</div>
-                    <div class="absolute bottom-10 right-3 text-xs opacity-50">✨</div>
-                `;
-                document.getElementById('strip-footer-text').className = "text-[9px] tracking-widest text-rose-400 font-medium";
+                    <div class="absolute bottom-11 left-3 text-xs opacity-40">✨</div>
+                    <div class="absolute bottom-11 right-3 text-xs opacity-40">✨</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-rose-400 font-semibold";
             } else if (style === 'stars') {
                 frameDecorations.innerHTML = `
                     <div class="absolute top-2 left-2 text-xs opacity-70">⭐</div>
-                    <div class="absolute top-1/2 right-2 text-xs opacity-50">✨</div>
-                    <div class="absolute bottom-10 left-2 text-xs opacity-70">⭐</div>
-                `;
-                document.getElementById('strip-footer-text').className = "text-[9px] tracking-widest text-amber-600 font-medium";
+                    <div class="absolute top-1/2 right-2 text-xs opacity-40">✨</div>
+                    <div class="absolute bottom-11 left-2 text-xs opacity-70">⭐</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-amber-600 font-semibold";
+            } else if (style === 'matcha') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-70">🌿</div>
+                    <div class="absolute top-2 right-2 text-xs opacity-70">🌿</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-emerald-700 font-semibold";
+            } else if (style === 'lavender') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-60">🔮</div>
+                    <div class="absolute bottom-11 right-3 text-xs opacity-60">✨</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-indigo-500 font-semibold";
+            } else if (style === 'dark') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 right-3 text-xs opacity-60">🌙</div>
+                    <div class="absolute bottom-11 left-3 text-xs opacity-40">✨</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-slate-300 font-medium";
+            } else if (style === 'peach') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-70">🍑</div>
+                    <div class="absolute top-2 right-2 text-xs opacity-70">🍑</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-orange-500 font-semibold";
+            } else if (style === 'choco') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-60">🍩</div>
+                    <div class="absolute bottom-11 right-2 text-xs opacity-50">✨</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-amber-800 font-semibold";
+            } else if (style === 'lilac') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-70">☁️</div>
+                    <div class="absolute top-2 right-2 text-xs opacity-70">✨</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-fuchsia-500 font-semibold";
+            } else if (style === 'charcoal') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-3 text-xs opacity-50">🖤</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-slate-500 font-semibold";
+            } else if (style === 'berry') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-70">🍓</div>
+                    <div class="absolute top-2 right-2 text-xs opacity-70">🍓</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-pink-500 font-semibold";
+            } else if (style === 'coconut') {
+                frameDecorations.innerHTML = `
+                    <div class="absolute top-2 left-2 text-xs opacity-50">🥥</div>
+                    <div class="absolute bottom-11 right-3 text-xs opacity-40">✨</div>`;
+                stripFooterText.className = "text-[9px] tracking-widest text-stone-500 font-semibold";
             } else {
-                document.getElementById('strip-footer-text').className = "text-[9px] tracking-widest text-stone-400 font-light";
+                stripFooterText.className = "text-[9px] tracking-widest text-stone-400 font-light";
             }
         }
 
         function startPhotobooth() {
             photosTaken = 0;
             startBtn.disabled = true;
-            startBtn.innerText = "Pose Sekarang!";
+            startBtn.innerText = "Pose!";
             downloadBtn.disabled = true;
-            for(let i = 1; i <= 4; i++) {
-                document.getElementById(`canvas-${i}`).classList.add('hidden');
-            }
+            for(let i = 1; i <= 4; i++) document.getElementById(`canvas-${i}`).classList.add('hidden');
             takeNextPhoto();
         }
 
@@ -272,7 +350,7 @@
                     photosTaken++;
                     photoIndexEl.innerText = photosTaken;
 
-                    setTimeout(takeNextPhoto, 1500); // Jeda antar pose 1.5 detik
+                    setTimeout(takeNextPhoto, 1600);
                 }
             }, 1000);
         }
@@ -284,7 +362,6 @@
 
             const videoWidth = video.videoWidth || 640;
             const videoHeight = video.videoHeight || 480;
-
             const targetWidth = 1024;
             const targetHeight = 768;
 
@@ -316,7 +393,7 @@
             startBtn.disabled = false;
             startBtn.innerText = "Mulai Foto Otomatis";
             downloadBtn.disabled = true;
-            setFrame('#ffffff', 'clear');
+            setFrame('#ffffff', 'clear', 'Memorable Day');
             setFilter('filter-normal');
             for(let i = 1; i <= 4; i++) {
                 const canvas = document.getElementById(`canvas-${i}`);
@@ -344,16 +421,45 @@
             mCtx.fillStyle = currentFrameColor;
             mCtx.fillRect(0, 0, stripWidth, stripHeight);
 
+            mCtx.font = '60px Arial';
             if (currentFrameStyle === 'hearts') {
                 mCtx.fillStyle = 'rgba(244, 63, 94, 0.7)';
-                mCtx.font = '60px Arial';
                 mCtx.fillText('🌸', padding, padding + 15);
                 mCtx.fillText('🌸', stripWidth - padding - 65, padding + 15);
             } else if (currentFrameStyle === 'stars') {
                 mCtx.fillStyle = 'rgba(217, 119, 6, 0.7)';
-                mCtx.font = '60px Arial';
                 mCtx.fillText('⭐', padding, padding + 15);
                 mCtx.fillText('⭐', stripWidth - padding - 65, padding + 15);
+            } else if (currentFrameStyle === 'matcha') {
+                mCtx.fillStyle = 'rgba(16, 185, 129, 0.7)';
+                mCtx.fillText('🌿', padding, padding + 15);
+                mCtx.fillText('🌿', stripWidth - padding - 65, padding + 15);
+            } else if (currentFrameStyle === 'lavender') {
+                mCtx.fillStyle = 'rgba(99, 102, 241, 0.7)';
+                mCtx.fillText('🔮', padding, padding + 15);
+            } else if (currentFrameStyle === 'dark') {
+                mCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                mCtx.fillText('🌙', stripWidth - padding - 65, padding + 15);
+            } else if (currentFrameStyle === 'peach') {
+                mCtx.fillStyle = 'rgba(249, 115, 22, 0.7)';
+                mCtx.fillText('🍑', padding, padding + 15);
+                mCtx.fillText('🍑', stripWidth - padding - 65, padding + 15);
+            } else if (currentFrameStyle === 'choco') {
+                mCtx.fillStyle = 'rgba(146, 64, 14, 0.7)';
+                mCtx.fillText('🍩', padding, padding + 15);
+            } else if (currentFrameStyle === 'lilac') {
+                mCtx.fillStyle = 'rgba(217, 70, 239, 0.7)';
+                mCtx.fillText('☁️', padding, padding + 15);
+            } else if (currentFrameStyle === 'charcoal') {
+                mCtx.fillStyle = 'rgba(100, 116, 139, 0.7)';
+                mCtx.fillText('🖤', padding, padding + 15);
+            } else if (currentFrameStyle === 'berry') {
+                mCtx.fillStyle = 'rgba(236, 72, 153, 0.7)';
+                mCtx.fillText('🍓', padding, padding + 15);
+                mCtx.fillText('🍓', stripWidth - padding - 65, padding + 15);
+            } else if (currentFrameStyle === 'coconut') {
+                mCtx.fillStyle = 'rgba(120, 113, 108, 0.6)';
+                mCtx.fillText('🥥', padding, padding + 15);
             }
 
             let imagesLoaded = 0;
@@ -377,10 +483,22 @@
                     imagesLoaded++;
                     if (imagesLoaded === 4) {
                         mCtx.filter = 'none';
-                        mCtx.fillStyle = currentFrameStyle === 'hearts' ? '#f43f5e' : (currentFrameStyle === 'stars' ? '#b45309' : '#a8a29e');
+                        if(currentFrameStyle === 'hearts') mCtx.fillStyle = '#f43f5e';
+                        else if(currentFrameStyle === 'stars') mCtx.fillStyle = '#b45309';
+                        else if(currentFrameStyle === 'matcha') mCtx.fillStyle = '#047857';
+                        else if(currentFrameStyle === 'lavender') mCtx.fillStyle = '#6366f1';
+                        else if(currentFrameStyle === 'dark') mCtx.fillStyle = '#e2e8f0';
+                        else if(currentFrameStyle === 'peach') mCtx.fillStyle = '#ea580c';
+                        else if(currentFrameStyle === 'choco') mCtx.fillStyle = '#78350f';
+                        else if(currentFrameStyle === 'lilac') mCtx.fillStyle = '#c026d3';
+                        else if(currentFrameStyle === 'charcoal') mCtx.fillStyle = '#475569';
+                        else if(currentFrameStyle === 'berry') mCtx.fillStyle = '#db2777';
+                        else if(currentFrameStyle === 'coconut') mCtx.fillStyle = '#57534e';
+                        else mCtx.fillStyle = '#a8a29e';
+
                         mCtx.font = '32px Arial';
                         mCtx.textAlign = 'center';
-                        mCtx.fillText(document.getElementById('strip-footer-text').innerText, stripWidth / 2, stripHeight - 75);
+                        mCtx.fillText(stripFooterText.innerText, stripWidth / 2, stripHeight - 75);
 
                         const link = document.createElement('a');
                         link.download = `photobooth-${Date.now()}.png`;
