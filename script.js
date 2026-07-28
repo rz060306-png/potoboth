@@ -116,15 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
         timerDelay = parseInt(e.target.value);
     });
 
-    // Vignette & Grain Toggles
-    vignetteToggle.addEventListener('change', (e) => {
-        vignetteOverlay.classList.toggle('hidden', !e.target.checked);
-    });
-
-    grainToggle.addEventListener('change', (e) => {
-        grainOverlay.classList.toggle('hidden', !e.target.checked);
-    });
-
     // Set Filter Video
     function setFilter(filterClass) {
         currentFilter = filterClass;
@@ -203,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function takeNextPhoto() {
         if (photosTaken >= maxSlots) {
             startBtn.disabled = false;
-            startBtn.innerText = '⚡ Mulai Foto Otomatis';
+            startBtn.innerText = 'Mulai Foto';
             downloadBtn.disabled = false;
             return;
         }
