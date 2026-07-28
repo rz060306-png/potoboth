@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #faf8f5;
+    -webkit-tap-highlight-color: transparent;
+}
+
+video {
+    transform: scaleX(-1);
+}
+
+.captured-frame {
+    transform: scaleX(-1);
+}
+
+/* Filter Preset CSS */
+.filter-normal { filter: none; }
+.filter-vintage { filter: sepia(0.35) contrast(0.95) brightness(1.05) saturate(1.1); }
+.filter-bw { filter: grayscale(1) contrast(1.15) brightness(1.02); }
+.filter-warm { filter: saturate(1.2) sepia(0.12) brightness(1.03); }
+.filter-cool { filter: hue-rotate(10deg) saturate(1.1) brightness(1.03); }
+
+/* Vignette Effect Overlay */
+.vignette-effect {
+    background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.4) 100%);
+}
+
+/* Grain Effect Overlay */
+.grain-effect {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E");
+}
+
+/* Custom Drag & Drop Sticker Element */
+.drag-sticker {
+    position: absolute;
+    cursor: move;
+    font-size: 24px;
+    user-select: none;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+/* Scrollbar Styling */
+.custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 8px;
+}
+
+/* UI Active Highlight */
+.filter-active {
+    border-color: #475569 !important;
+    font-weight: 700 !important;
+}
+
+.frame-active {
+    border-color: #0f172a !important;
+    box-shadow: 0 0 0 1px #0f172a;
+}
+
+@media (max-width: 768px) {
+    .responsive-strip-container {
+        transform: scale(0.88);
+        transform-origin: top center;
+        margin-bottom: -35px;
+    }
+}
